@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, OnInit } from '@angular/core';
 import { Producto } from '../../../shared/models/producto.model';
 import { ProductoService } from '../../../core/services/producto.service';
@@ -6,7 +6,7 @@ import { ProductoService } from '../../../core/services/producto.service';
 @Component({
   selector: 'app-catalogo-productos',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './catalogo-productos.html',
   styleUrl: './catalogo-productos.css',
 })

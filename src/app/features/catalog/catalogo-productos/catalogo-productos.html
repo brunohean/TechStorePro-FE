@@ -1,33 +1,31 @@
 <div class="container mt-5 mb-5">
   <h2 class="mb-4 text-center fw-bold">Catálogo TechStore Pro</h2>
-  
-  <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
-    <div class="col" *ngFor="let prod of productos">
-      <div class="card h-100 shadow-sm border-0">
-        
-        <img [src]="prod.imagenes && prod.imagenes.length > 0 ? prod.imagenes[0] : 'https://via.placeholder.com/300x250?text=Sin+Imagen'" 
-             class="card-img-top" alt="{{ prod.nombre }}" style="object-fit: cover; height: 250px;">
-        
-        <div class="card-body bg-light">
-          <h5 class="card-title fw-bold text-truncate" [title]="prod.nombre">{{ prod.nombre }}</h5>
-          <p class="card-text text-muted small text-truncate">{{ prod.descripcion }}</p>
-          <h4 class="text-primary fw-bold">${{ prod.precio }}</h4>
-          
-          <p class="mb-0 text-success fw-bold" *ngIf="prod.stock > 0; else sinStock">
-            Stock: {{ prod.stock }} unid.
-          </p>
-          <ng-template #sinStock>
-            <p class="mb-0 text-danger fw-bold">Agotado Temporalmente</p>
-          </ng-template>
-        </div>
-        
-        <div class="card-footer bg-white border-0 pb-3">
-          <button class="btn btn-dark w-100 fw-bold" [disabled]="prod.stock === 0">
-            Añadir al Carrito
-          </button>
-        </div>
 
+  <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+    @for (prod of productos; track prod) {
+      <div class="col">
+        <div class="card h-100 shadow-sm border-0">
+          <img [src]="prod.imagenes && prod.imagenes.length > 0 ? prod.imagenes[0] : 'https://via.placeholder.com/300x250?text=Sin+Imagen'"
+          class="card-img-top" alt="{{ prod.nombre }}" style="object-fit: cover; height: 250px;">
+          <div class="card-body bg-light">
+            <h5 class="card-title fw-bold text-truncate" [title]="prod.nombre">{{ prod.nombre }}</h5>
+            <p class="card-text text-muted small text-truncate">{{ prod.descripcion }}</p>
+            <h4 class="text-primary fw-bold">${{ prod.precio }}</h4>
+            @if (prod.stock > 0) {
+              <p class="mb-0 text-success fw-bold">
+                Stock: {{ prod.stock }} unid.
+              </p>
+            } @else {
+              <p class="mb-0 text-danger fw-bold">Agotado Temporalmente</p>
+            }
+          </div>
+          <div class="card-footer bg-white border-0 pb-3">
+            <button class="btn btn-dark w-100 fw-bold" [disabled]="prod.stock === 0">
+              Añadir al Carrito
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
+    }
   </div>
 </div>

@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Producto } from '../../../shared/models/producto.model';
@@ -7,7 +7,7 @@ import { ProductoService } from '../../../core/services/producto.service';
 @Component({
   selector: 'app-gestion-productos',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule],
   templateUrl: './gestion-productos.html',
   styleUrl: './gestion-productos.css',
 })
