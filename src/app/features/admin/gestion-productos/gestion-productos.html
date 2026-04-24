@@ -1,1 +1,85 @@
-<p>gestion-productos works!</p>
+<div class="container mt-5 mb-5">
+  <div class="card shadow border-0">
+    <div class="card-header bg-dark text-white">
+      <h4 class="mb-0">Crear Nuevo Producto (Carga Masiva Cloudinary)</h4>
+    </div>
+    <div class="card-body bg-light">
+      <div *ngIf="mensaje" class="alert alert-info fw-bold">{{ mensaje }}</div>
+
+      <form (ngSubmit)="crear()" #productoForm="ngForm">
+        <div class="mb-3">
+          <label class="form-label fw-bold">Nombre del Producto</label>
+          <input
+            type="text"
+            class="form-control"
+            name="nombre"
+            [(ngModel)]="producto.nombre"
+            required
+            placeholder="Ej: Teclado Mecánico RGB"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-bold">Descripción</label>
+          <textarea
+            class="form-control"
+            name="descripcion"
+            [(ngModel)]="producto.descripcion"
+            rows="3"
+            required
+            placeholder="Detalles del producto..."
+          ></textarea>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label fw-bold">Precio ($)</label>
+            <input
+              type="number"
+              class="form-control"
+              name="precio"
+              [(ngModel)]="producto.precio"
+              required
+            />
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label fw-bold">Stock Inicial</label>
+            <input
+              type="number"
+              class="form-control"
+              name="stock"
+              [(ngModel)]="producto.stock"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="mb-4 p-3 border rounded bg-white">
+          <label class="form-label fw-bold text-primary"
+            >Imágenes del Producto</label
+          >
+          <input
+            type="file"
+            class="form-control"
+            (change)="onFileChange($event)"
+            multiple
+            accept="image/*"
+            required
+          />
+          <div class="form-text">
+            Puedes seleccionar múltiples fotos manteniendo presionada la tecla
+            Ctrl (Windows) o Cmd (Mac).
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          class="btn btn-primary w-100 fw-bold py-2"
+          [disabled]="productoForm.invalid || archivosSeleccionados.length === 0"
+        >
+          Subir y Guardar Producto
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
