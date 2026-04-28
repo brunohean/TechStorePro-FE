@@ -1,9 +1,19 @@
+export interface ImagenProducto {
+  id?: number;
+  nombreArchivo: string;
+  urlPublica: string;
+  providerId: string;
+  storageProvider: string;
+  formato: string;
+  esPrincipal: boolean;
+}
+
 export interface Producto {
   id?: number;
   nombre: string;
   descripcion: string;
   precio: number;
   stock: number;
-  imagenes: string[]; // Arreglo de URLs de Cloudinary
-  activo: boolean;
+  activo?: boolean;
+  imagenPrincipalUrl?: string; // <- El nuevo atributo plano que viene del DTO
 }

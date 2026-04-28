@@ -2,15 +2,23 @@
   <h2 class="mb-4 text-center fw-bold">Catálogo TechStore Pro</h2>
 
   <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
-    @for (prod of productos; track prod) {
+    @for (prod of productos; track prod.id) {
     <div class="col">
       <div class="card h-100 shadow-sm border-0">
-        <img
-          [src]="prod.imagenes && prod.imagenes.length > 0 ? prod.imagenes[0] : 'https://via.placeholder.com/300x250?text=Sin+Imagen'"
-          class="card-img-top"
-          alt="{{ prod.nombre }}"
-          style="object-fit: cover; height: 250px"
-        />
+        <div class="position-relative">
+          <img
+            [src]="prod.imagenPrincipalUrl ? prod.imagenPrincipalUrl : 'assets/images/placeholder.png'"
+            class="card-img-top p-3"
+            [alt]="prod.nombre"
+            style="height: 200px; object-fit: contain"
+          />
+
+          @if (prod.stock === 0) {
+          <span class="position-absolute top-0 end-0 m-2 badge bg-danger"
+            >Agotado</span
+          >
+          }
+        </div>
         <div class="card-body bg-light">
           <h5 class="card-title fw-bold text-truncate" [title]="prod.nombre">
             {{ prod.nombre }}

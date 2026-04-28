@@ -1,5 +1,4 @@
-
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Producto } from '../../../shared/models/producto.model';
 import { ProductoService } from '../../../core/services/producto.service';
@@ -12,12 +11,13 @@ import { ProductoService } from '../../../core/services/producto.service';
   styleUrl: './gestion-productos.css',
 })
 export class GestionProductos {
+  private productoService = inject(ProductoService);
+
   producto: Producto = {
     nombre: '',
     descripcion: '',
     precio: 0,
     stock: 0,
-    imagenes: [],
     activo: true,
   };
 
@@ -25,11 +25,9 @@ export class GestionProductos {
   archivosSeleccionados: File[] = [];
   mensaje: string = '';
 
-  constructor(private productoService: ProductoService) {}
-
   // Método que se dispara al seleccionar fotos en el input
   onFileChange(event: any) {
-    if (event.target.files.length > 0) {
+    if (event.target.files && event.target.files.length > 0) {
       // Convertimos el FileList del navegador a un arreglo de TypeScript
       this.archivosSeleccionados = Array.from(event.target.files);
     }
@@ -37,28 +35,44 @@ export class GestionProductos {
 
   // Método que se ejecuta al darle al botón "Guardar"
   crear() {
-    this.productoService
-      .crearProducto(this.producto, this.archivosSeleccionados)
-      .subscribe({
-        next: (res) => {
-          this.mensaje =
-            '🚀 ¡Producto creado con éxito! Las imágenes se enviaron a Cloudinary.';
-          // Reseteamos el formulario
-          this.producto = {
-            nombre: '',
-            descripcion: '',
-            precio: 0,
-            stock: 0,
-            imagenes: [],
-            activo: true,
-          };
-          this.archivosSeleccionados = [];
-        },
-        error: (err) => {
-          console.error('Error del Backend:', err);
-          this.mensaje =
-            '❌ Hubo un error al crear el producto. Verifica que el servidor de Spring Boot esté encendido.';
-        },
-      });
+    const formData = new FormData();
+
+    // 1. Empaquetamos el texto del producto como un Blob JSON
+    const productoBlob = new Blob([JSON.stringify(this.producto)], {
+      type: 'application/json',
+    });
+    formData.append('producto', productoBlob);
+
+    // 2. Empaquetamos cada imagen física
+    // 'imagenes' DEBE coincidir con el @RequestPart("imagenes") en Spring Boot
+    this.archivosSeleccionados.forEach((archivo) => {
+      formData.append('imagenes', archivo);
+    });
+
+    // 3. Enviamos al servicio
+    this.productoService.crearProductoConImagenes(formData).subscribe({
+      next: (res) => {
+        this.mensaje =
+          '🚀 ¡Producto creado con éxito! Las imágenes se enviaron a Cloudinary.';
+        this.resetForm();
+      },
+      error: (err) => {
+        this.mensaje = '❌ Error al crear el producto. Revisa la consola.';
+        console.error(err);
+      },
+    });
+  }
+
+  resetForm() {
+    this.producto = {
+      nombre: '',
+      descripcion: '',
+      precio: 0,
+      stock: 0,
+      activo: true,
+    };
+    this.archivosSeleccionados = [];
+    // Nota: Para limpiar visualmente el input file en el HTML, requerirías un ViewChild,
+    // pero a nivel lógico el arreglo ya está vacío.
   }
 }
