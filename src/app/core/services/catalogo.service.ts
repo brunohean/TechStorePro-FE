@@ -13,7 +13,8 @@ export class CatalogoService {
   // Apuntamos estrictamente a la ruta segregada de lectura pública
   private readonly API_URL = `${environment.apiUrl}/productos/catalogo`;
 
-  getProductosCatalogo(): Observable<Producto[]> {
-    return this.http.get<Producto[]>(this.API_URL);
+  // Pedimos 10 por defecto para mantener el grid simétrico
+  getProductosCatalogo(page: number = 0, size: number = 10): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}?page=${page}&size=${size}`);
   }
 }

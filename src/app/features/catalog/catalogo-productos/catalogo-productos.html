@@ -1,19 +1,28 @@
 <div class="container mt-5 mb-5">
   <h2 class="mb-4 text-center fw-bold">Catálogo TechStore Pro</h2>
 
-  <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
-    @for (prod of productos; track prod.id) {
+  <div class="row row-cols-1 row-cols-md-3 row-cols-lg-5 g-4">
+    @for (prod of productos; track prod.id; let i = $index) {
     <div class="col">
       <div class="card h-100 shadow-sm border-0">
-        <div class="position-relative">
+        <div class="position-relative w-100" style="height: 200px">
+          @if (prod.imagenPrincipalUrl) {
           <img
-            [src]="prod.imagenPrincipalUrl ? prod.imagenPrincipalUrl : 'assets/images/placeholder.png'"
+            [ngSrc]="prod.imagenPrincipalUrl"
             class="card-img-top p-3"
             [alt]="prod.nombre"
-            style="height: 200px; object-fit: contain"
+            fill
+            style="object-fit: contain"
+            [priority]="i < 8"
           />
-
-          @if (prod.stock === 0) {
+          } @else {
+          <div
+            class="w-100 h-100 d-flex flex-column justify-content-center align-items-center bg-light text-secondary rounded-top"
+          >
+            <i class="bi bi-image-alt" style="font-size: 3rem"></i>
+            <span class="small mt-2">Sin imagen</span>
+          </div>
+          } @if (prod.stock === 0) {
           <span class="position-absolute top-0 end-0 m-2 badge bg-danger"
             >Agotado</span
           >
@@ -45,5 +54,27 @@
       </div>
     </div>
     }
+  </div>
+  <div class="d-flex justify-content-center align-items-center mt-5 mb-4 gap-3">
+    <button
+      class="btn btn-outline-dark px-4"
+      (click)="irPaginaAnterior()"
+      [disabled]="esPrimeraPagina"
+    >
+      <i class="bi bi-chevron-left"></i> Anterior
+    </button>
+
+    <span class="fw-bold text-muted">
+      Página {{ paginaActual + 1 }} de {{ totalPaginas === 0 ? 1 : totalPaginas
+      }}
+    </span>
+
+    <button
+      class="btn btn-outline-dark px-4"
+      (click)="irPaginaSiguiente()"
+      [disabled]="esUltimaPagina"
+    >
+      Siguiente <i class="bi bi-chevron-right"></i>
+    </button>
   </div>
 </div>
