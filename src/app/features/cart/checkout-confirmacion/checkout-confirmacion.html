@@ -1,0 +1,56 @@
+<div class="container py-5">
+  <!-- Barra de Progreso (Paso 3 Activo/Completado) -->
+  <div class="row justify-content-center mb-5">
+    <div class="col-md-8">
+      <div class="d-flex justify-content-between position-relative">
+        <div class="text-center" style="z-index: 2;">
+          <div class="rounded-circle bg-success text-white d-inline-block px-3 py-2 mb-1 shadow-sm"><i class="bi bi-check-lg"></i></div>
+          <p class="small fw-bold text-success">Carrito</p>
+        </div>
+        <div class="text-center" style="z-index: 2;">
+          <div class="rounded-circle bg-success text-white d-inline-block px-3 py-2 mb-1 shadow-sm"><i class="bi bi-check-lg"></i></div>
+          <p class="small fw-bold text-success">Identificación</p>
+        </div>
+        <div class="text-center" style="z-index: 2;">
+          <div class="rounded-circle bg-primary text-white d-inline-block px-3 py-2 mb-1 fw-bold shadow-sm"><i class="bi bi-flag-fill"></i></div>
+          <p class="small fw-bold text-primary">Confirmación</p>
+        </div>
+        <div class="position-absolute top-50 start-0 translate-middle-y w-100 bg-success border-top border-success border-2" style="z-index: 1;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8 text-center">
+      <div class="card border-0 shadow-sm rounded-4 p-5 bg-white">
+        <!-- Ícono de Éxito Animado / Grande -->
+        <div class="mb-4">
+          <div class="d-inline-flex align-items-center justify-content-center bg-success bg-opacity-10 text-success rounded-circle" style="width: 100px; height: 100px;">
+            <i class="bi bi-check-circle-fill" style="font-size: 4rem;"></i>
+          </div>
+        </div>
+        
+        <h2 class="fw-bold text-dark mb-3">¡Compra Exitosa!</h2>
+        <p class="text-secondary fs-6 mb-4">
+          Tu pedido ha sido procesado correctamente y ya estamos preparando tus productos tecnológicos para el envío.
+        </p>
+
+        <!-- Tarjeta de Código de Pedido -->
+        <div class="bg-light p-4 rounded-4 mb-4 border border-2 border-primary border-opacity-25">
+          <p class="text-secondary small fw-bold mb-1 text-uppercase letter-spacing-1">Número de Seguimiento</p>
+          <h3 class="fw-black text-primary mb-0 font-monospace">#{{ pedidoId || 'CARGANDO...' }}</h3>
+        </div>
+
+        <p class="small text-muted mb-5">
+          <i class="bi bi-envelope-check me-1"></i> Te enviaremos actualizaciones del estado de tu pedido pronto.
+        </p>
+
+        <div class="d-grid gap-3">
+          <a routerLink="/catalogo" class="btn btn-outline-primary btn-lg rounded-pill fw-bold py-3 shadow-sm">
+            <i class="bi bi-bag-check me-2"></i> Seguir Comprando
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

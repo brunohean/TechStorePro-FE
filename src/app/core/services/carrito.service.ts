@@ -1,13 +1,19 @@
-import { computed, effect, Injectable, signal } from '@angular/core';
+import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { CarritoItem } from '../../shared/models/carrito.model';
 import { Producto } from '../../shared/models/producto.model';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
+import { forkJoin, Observable, of, switchMap } from 'rxjs';
 
+const API_URL = environment.apiUrl;
 @Injectable({
   providedIn: 'root',
 })
 export class CarritoService {
   // Nuestro estado global reactivo usando Signals
   private itemsSignal = signal<CarritoItem[]>([]);
+  private http = inject(HttpClient);
+  private readonly CARRITO_URL = `${API_URL}/carrito`;
 
   // 1. CARGA INICIAL: Al instanciar el servicio, recuperamos lo guardado
   constructor() {
@@ -28,6 +34,38 @@ export class CarritoService {
         JSON.stringify(this.itemsSignal()),
       );
     });
+  }
+
+  sincronizarCarritoConBackend(): Observable<any> {
+    const items = this.itemsSignal();
+
+    if (items.length === 0) {
+      return of(null);
+    }
+
+    // PRUEBA RÁPIDA: Recuperamos el token guardado en el LocalStorage o en el AuthService
+    const token =
+      localStorage.getItem('tech_token') || sessionStorage.getItem('token');
+    let headers = new HttpHeaders();
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
+
+    // Paso 1: Limpiamos el carrito en la base de datos para evitar conflictos
+    return this.http.delete<any>(`${this.CARRITO_URL}/limpiar`, { headers }).pipe(
+      switchMap(() => {
+        // Paso 2: Creamos un arreglo de peticiones POST para cada producto
+        const peticiones = items.map(item =>
+          this.http.post<any>(`${this.CARRITO_URL}/agregar`, {
+            productoId: item.producto.id,
+            cantidad: item.cantidad
+          }, { headers })
+        );
+
+        // Paso 3: Ejecutamos todas las peticiones en paralelo de manera segura
+        return forkJoin(peticiones);
+      })
+    );
   }
 
   public total = computed(() => {
@@ -52,11 +90,15 @@ export class CarritoService {
       if (itemExistente) {
         return items.map((i) =>
           i.producto.id === producto.id
-            ? { ...i, cantidad: i.cantidad + 1 }
+            ? {
+                ...i,
+                cantidad: i.cantidad + 1,
+                subtotal: (i.cantidad + 1) * i.producto.precio,
+              }
             : i,
         );
       }
-      return [...items, { producto, cantidad: 1 }];
+      return [...items, { producto, cantidad: 1, subtotal: producto.precio }];
     });
   }
 
@@ -66,8 +108,17 @@ export class CarritoService {
       return items.map((item) => {
         if (item.producto.id === productoId) {
           const nuevaCantidad = item.cantidad + cambio;
-          // Evitamos que la cantidad sea menor a 1
-          return { ...item, cantidad: Math.max(1, nuevaCantidad) };
+          // Validar que no baje de 1 ni supere el stock disponible
+          const cantidadFinal = Math.max(
+            1,
+            Math.min(nuevaCantidad, item.producto.stock),
+          );
+
+          return {
+            ...item,
+            cantidad: cantidadFinal,
+            subtotal: cantidadFinal * item.producto.precio,
+          };
         }
         return item;
       });

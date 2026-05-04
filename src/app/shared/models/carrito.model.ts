@@ -1,9 +1,9 @@
 import { Producto } from './producto.model';
 
 export interface CarritoItem {
-  id?: number;
   producto: Producto;
   cantidad: number;
+  subtotal: number;
 }
 
 export interface Carrito {

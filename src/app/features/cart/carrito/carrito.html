@@ -1,0 +1,147 @@
+<div class="container py-5">
+  <!-- Progress Bar (Paso 1) -->
+  <div class="row justify-content-center mb-5">
+    <div class="col-md-8">
+      <div class="d-flex justify-content-between position-relative">
+        <div class="text-center" style="z-index: 2;">
+          <div class="rounded-circle bg-primary text-white d-inline-block px-3 py-2 mb-1 fw-bold">1</div>
+          <p class="small fw-bold">Carrito</p>
+        </div>
+        <div class="text-center" style="z-index: 2;">
+          <div class="rounded-circle bg-light text-muted d-inline-block px-3 py-2 mb-1 border">2</div>
+          <p class="small text-muted">Identificación</p>
+        </div>
+        <div class="text-center" style="z-index: 2;">
+          <div class="rounded-circle bg-light text-muted d-inline-block px-3 py-2 mb-1 border">3</div>
+          <p class="small text-muted">Confirmación</p>
+        </div>
+        <div class="position-absolute top-50 start-0 translate-middle-y w-100 bg-light" style="height: 2px; z-index: 1;"></div>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="display-6 fw-bold mb-4">Tu Carrito</h2>
+
+  @if (items().length === 0) {
+    <div class="text-center py-5 bg-light rounded-4 shadow-sm border-0">
+      <i class="bi bi-pc-display-horizontal display-1 text-muted mb-3 d-block"></i>
+      <h3 class="fw-bold text-dark">Tu carrito está vacío</h3>
+      <p class="text-muted mb-4">Aún no has agregado equipos o accesorios tecnológicos.</p>
+      <a routerLink="/catalogo" class="btn btn-primary rounded-pill px-4 py-2 fw-bold">
+        Volver al Catálogo
+      </a>
+    </div>
+  } @else {
+    <div class="row g-4">
+      <!-- Tabla de Productos -->
+      <div class="col-lg-8">
+        <div class="card border-0 shadow-sm rounded-4">
+          <div class="card-body p-4">
+            <div class="table-responsive">
+              <table class="table align-middle">
+                <thead>
+                  <tr class="text-muted">
+                    <th>Producto</th>
+                    <th>Precio</th>
+                    <th class="text-center">Cantidad</th>
+                    <th class="text-end">Subtotal</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (item of items(); track item.producto.id) {
+                    <tr>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <img
+                            [src]="item.producto.imagenPrincipalUrl || 'https://images.unsplash.com/photo-1587831990711-23ca6441447b?q=80&w=100'"
+                            (error)="actualizarImagenDefault($event)"
+                            class="rounded-3 me-3 border border-secondary-subtle"
+                            style="width: 60px; height: 60px; object-fit: contain"
+                          />
+                          <div>
+                            <h6 class="mb-0 fw-bold">{{ item.producto.nombre }}</h6>
+                            <small class="text-success">Stock: {{ item.producto.stock }}</small>
+                          </div>
+                        </div>
+                      </td>
+                      <td>S/ {{ item.producto.precio | number: "1.2-2" }}</td>
+
+                      <!-- Controles de Cantidad unificados -->
+                      <td>
+                        <div class="d-flex justify-content-center align-items-center">
+                          <button
+                            class="btn btn-sm btn-outline-secondary rounded-circle"
+                            (click)="carritoService.actualizarCantidad(item.producto.id!, -1)"
+                            [disabled]="item.cantidad === 1"
+                          >
+                            <i class="bi bi-dash"></i>
+                          </button>
+                          <span class="mx-3 fw-bold">{{ item.cantidad }}</span>
+                          <button
+                            class="btn btn-sm btn-outline-secondary rounded-circle"
+                            (click)="carritoService.actualizarCantidad(item.producto.id!, 1)"
+                            [disabled]="item.cantidad >= item.producto.stock"
+                          >
+                            <i class="bi bi-plus"></i>
+                          </button>
+                        </div>
+                      </td>
+
+                      <td class="text-end fw-bold">
+                        S/ {{ item.subtotal | number: "1.2-2" }}
+                      </td>
+                      <td class="text-end">
+                        <button
+                          class="btn btn-sm btn-danger rounded-circle"
+                          (click)="carritoService.eliminarItem(item.producto.id!)"
+                        >
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resumen de Compra -->
+      <div class="col-lg-4">
+        <div class="card border-0 shadow-sm rounded-4 bg-dark text-white sticky-top" style="top: 20px;">
+          <div class="card-body p-4">
+            <h5 class="fw-bold mb-4">Resumen de Compra</h5>
+
+            <div class="d-flex justify-content-between mb-3">
+              <span>Productos ({{ cantidad() }})</span>
+              <span>S/ {{ total() | number: "1.2-2" }}</span>
+            </div>
+            <div class="d-flex justify-content-between mb-4 pb-3 border-bottom border-secondary">
+              <span>Envío</span>
+              <span class="text-info">Calculado en el checkout</span>
+            </div>
+
+            <div class="d-flex justify-content-between mb-4">
+              <h5 class="fw-bold mb-0">Total</h5>
+              <h5 class="fw-bold mb-0 text-primary">
+                S/ {{ total() | number: "1.2-2" }}
+              </h5>
+            </div>
+
+            <div class="mt-4">
+              <button
+                class="btn btn-primary w-100 rounded-pill py-3 fw-bold shadow-sm"
+                (click)="irAIdentificacion()"
+                [disabled]="items().length === 0"
+              >
+                Proceder al Pago <i class="bi bi-shield-lock ms-2"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

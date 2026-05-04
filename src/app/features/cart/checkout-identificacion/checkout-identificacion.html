@@ -1,0 +1,112 @@
+<div class="container py-5">
+  <!-- Barra de Progreso (Paso 2 Activo) -->
+  <div class="row justify-content-center mb-5">
+    <div class="col-md-8">
+      <div class="d-flex justify-content-between position-relative">
+        <div class="text-center" style="z-index: 2;">
+          <div class="rounded-circle bg-success text-white d-inline-block px-3 py-2 mb-1 shadow-sm"><i class="bi bi-check-lg"></i></div>
+          <p class="small fw-bold text-success">Carrito</p>
+        </div>
+        <div class="text-center" style="z-index: 2;">
+          <div class="rounded-circle bg-primary text-white d-inline-block px-3 py-2 mb-1 fw-bold shadow-sm">2</div>
+          <p class="small fw-bold text-primary">Identificación</p>
+        </div>
+        <div class="text-center" style="z-index: 2;">
+          <div class="rounded-circle bg-white text-muted d-inline-block px-3 py-2 mb-1 border shadow-sm">3</div>
+          <p class="small text-muted">Confirmación</p>
+        </div>
+        <div class="position-absolute top-50 start-0 translate-middle-y w-100 bg-light border-top border-2" style="z-index: 1;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Columna Izquierda: Formulario de Envío -->
+    <div class="col-lg-7">
+      <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+        <div class="card-header bg-white border-bottom p-4">
+          <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-geo-alt-fill text-primary me-2"></i> Datos de Entrega</h5>
+        </div>
+        <div class="card-body p-4">
+          <form [formGroup]="pedidoForm" (ngSubmit)="confirmarPedido()">
+            
+            <div class="mb-4">
+              <label class="form-label fw-bold text-secondary">Nombre Completo</label>
+              <input type="text" class="form-control form-control-lg bg-light border-0" 
+                     [class.is-invalid]="pedidoForm.get('clienteNombre')?.invalid && pedidoForm.get('clienteNombre')?.touched"
+                     formControlName="clienteNombre" placeholder="¿A quién le entregamos el pedido?">
+              @if (pedidoForm.get('clienteNombre')?.invalid && pedidoForm.get('clienteNombre')?.touched) {
+                <div class="invalid-feedback fw-semibold">El nombre es obligatorio y debe tener al menos 3 caracteres.</div>
+              }
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-4">
+                <label class="form-label fw-bold text-secondary">Celular</label>
+                <input type="text" class="form-control form-control-lg bg-light border-0" 
+                       [class.is-invalid]="pedidoForm.get('celular')?.invalid && pedidoForm.get('celular')?.touched"
+                       formControlName="celular" placeholder="Ej. 987654321">
+                @if (pedidoForm.get('celular')?.invalid && pedidoForm.get('celular')?.touched) {
+                  <div class="invalid-feedback fw-semibold">Ingresa un número de celular válido de 9 dígitos.</div>
+                }
+              </div>
+              <div class="col-md-6 mb-4">
+                <label class="form-label fw-bold text-secondary">Dirección Exacta</label>
+                <input type="text" class="form-control form-control-lg bg-light border-0" 
+                       [class.is-invalid]="pedidoForm.get('direccion')?.invalid && pedidoForm.get('direccion')?.touched"
+                       formControlName="direccion" placeholder="Av. Los Ingenieros 123">
+                @if (pedidoForm.get('direccion')?.invalid && pedidoForm.get('direccion')?.touched) {
+                  <div class="invalid-feedback fw-semibold">La dirección es obligatoria.</div>
+                }
+              </div>
+            </div>
+
+            <div class="mt-2 pt-4 border-top">
+              <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill fw-bold py-3 shadow-sm transition-all"
+                      [disabled]="pedidoForm.invalid">
+                Confirmar y Pagar <i class="bi bi-arrow-right-circle ms-2"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+      
+      <div class="text-center mt-4">
+        <a routerLink="/carrito" class="text-decoration-none text-secondary fw-semibold">
+          <i class="bi bi-arrow-left me-1"></i> Volver al carrito
+        </a>
+      </div>
+    </div>
+
+    <!-- Columna Derecha: Mini Resumen de Compra -->
+    <div class="col-lg-5">
+      <div class="card border-0 shadow-sm rounded-4 bg-white sticky-top" style="top: 20px;">
+        <div class="card-body p-4">
+          <h5 class="fw-bold mb-4 text-dark">Resumen del Pedido</h5>
+          
+          <div class="mb-4">
+            @for (item of carritoService.items(); track item.producto.id) {
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="d-flex align-items-center gap-2">
+                  <span class="badge bg-light text-dark border">{{ item.cantidad }}x</span>
+                  <span class="text-secondary small text-truncate" style="max-width: 150px;">{{ item.producto.nombre }}</span>
+                </div>
+                <span class="fw-semibold text-dark">S/ {{ item.subtotal | number:'1.2-2' }}</span>
+              </div>
+            }
+          </div>
+
+          <div class="d-flex justify-content-between mb-3 border-top pt-3">
+            <span class="text-secondary">Envío</span>
+            <span class="text-success fw-semibold">Gratis</span>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center bg-light p-3 rounded-3 mt-3">
+            <h5 class="fw-bold mb-0 text-dark">Total a Pagar</h5>
+            <h4 class="fw-bold mb-0 text-primary">S/ {{ carritoService.total() | number:'1.2-2' }}</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
